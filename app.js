@@ -2,27 +2,35 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const productsRoutes = require("./api/routes/product");
 const ordersRoutes = require("./api/routes/order");
+
+mongoose.connect(
+  "mongodb+srv://root:" +
+    process.env.MONGO_ATLAS_PW +
+    "@react-node-shop.rrtsynt.mongodb.net/?retryWrites=true&w=majority"
+);
 
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-  res.header("Acess-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header(
-    "Acess-Control-Allow-Headers",
+    "Access-Control-Allow-Headers",
     "Origin , X-Requested-With, Content-Type , Accept  , Authorization"
   );
   if (req.method === "OPTIONS") {
     res.header(
-      "Acess-Control-Allow-Methods",
+      "Access-Control-Allow-Methods",
       "PUT , POST , PATCH , DELETE , GET"
     );
     return res.status(200).json({});
   }
+  next();
 });
 
 app.use("/products", productsRoutes);
